@@ -168,6 +168,8 @@ function loadUserDataFromLocalStorage() {
 		userTokenElement.value = userToken;
 	}
 
+	console.log(appendKeywordString);
+
 	if(appendKeywordString) {
 		const appendKeyword = JSON.parse(localStorage.appendKeywordString);
 		inputData.appendKeyword = appendKeyword;
