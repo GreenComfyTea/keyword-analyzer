@@ -171,13 +171,13 @@ function loadUserDataFromLocalStorage() {
 	console.log(appendKeywordString);
 
 	if(appendKeywordString) {
-		const appendKeyword = JSON.parse(localStorage.appendKeywordString);
+		const appendKeyword = JSON.parse(appendKeywordString);
 		inputData.appendKeyword = appendKeyword;
 		appendKeywordElement.value.checked = appendKeyword;
 	}
 
 	if(appendTableString) {
-		const appendTable = JSON.parse(localStorage.appendTableString);
+		const appendTable = JSON.parse(appendTableString);
 		inputData.appendTable = appendTable;
 		appendTableElement.value.checked = appendTable;
 	}
