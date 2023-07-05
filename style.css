@@ -1,0 +1,162 @@
+:root {
+	--default-margin: 8px;
+
+	--font-family: 'Montserrat', system-ui, -apple-system, "Segoe UI", "Roboto", "Ubuntu",
+    "Cantarell", "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+    "Segoe UI Symbol", "Noto Color Emoji";
+	--font-size: 0.8rem;
+	--font-weight: bold;
+	--line-height: 1.25;
+	--border-radius: 0.5rem;
+	--spacing: 0.25rem;
+	--form-element-spacing-vertical: 0.25rem;
+
+
+	--border-width: 1px;
+	--outline-width: 3px;
+	--typography-spacing-vertical: 1.5rem;
+	--block-spacing-vertical: calc(var(--spacing) * 2);
+	--block-spacing-horizontal: var(--spacing);
+	--grid-spacing-vertical: 0;
+	--grid-spacing-horizontal: var(--spacing);
+	--form-element-spacing-horizontal: 1rem;
+	--nav-element-spacing-vertical: 1rem;
+	--nav-element-spacing-horizontal: 0.5rem;
+	--nav-link-spacing-vertical: 0.5rem;
+	--nav-link-spacing-horizontal: 0.5rem;
+	--form-label-font-weight: var(--font-weight);
+	--transition: 0.2s ease-in-out;
+	--modal-overlay-backdrop-filter: blur(0.25rem);
+}
+
+#topInputContainer, #middleInputContainer {
+	display: flex;
+	align-items: center;
+}
+
+#middleInputContainer {
+	margin-top: var(--default-margin);
+}
+
+#bottomInputContainer{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+#bottomLeftInputContainer, #bottomRightInputContainer {
+	flex: 1;
+}
+
+#minViewsContainer, #minPotentialViewsContainer, #minCompetitionContainer, #minPotentialBuyersContainer {
+	display: flex;
+	align-items: center;
+	margin-top: var(--default-margin);
+}
+
+/* #minViewsContainer {
+	background-color: blueviolet;
+}
+
+#minPotentialViewsContainer {
+	background-color: brown;
+}
+
+#minCompetitionContainer {
+	background-color: chocolate;
+}
+
+#minPotentialBuyersContainer {
+	background-color: darkgreen;
+} */
+
+label {
+	white-space: nowrap;
+}
+
+input[type="range"] {
+	margin-left: var(--default-margin);
+	margin-right: var(--default-margin);
+	margin-bottom: 0%;
+}
+
+input[type="checkbox"] {
+	min-width: 16px;
+	width: 16px;
+	border-radius: 0.25rem;
+	margin-right: 0%;
+}
+
+input[type="text"], input[type="checkbox"] {
+	margin-left: var(--default-margin);
+	margin-bottom: 0%;
+}
+
+input[type="number"] {
+	justify-self: center;
+	margin-bottom: 0%;
+}
+
+#inputContainer {
+	padding-left: var(--default-margin);
+	padding-top: var(--default-margin);
+	padding-right: var(--default-margin);
+}
+
+#userIdLabel, #userTokenLabel, #appendTableLabel, #conversionRateLabel, #timeLimitLabel, #minCompetitionLabel, #minPotentialBuyersLabel {
+	margin-left: var(--default-margin);
+}
+
+#keyword, #userToken {
+	flex: 1;
+}
+
+#userID {
+	text-align: center;
+	width: 64px;
+}
+
+#userToken {
+	flex: 3
+}
+
+#getKeywordSuggestionsButton {
+	margin-top: var(--default-margin);
+}
+
+#conversionRateText {
+	width: 96px;
+}
+
+#timeLimitText {
+	width: 96px;
+}
+
+#minViewsText, #minCompetitionText, #minPotentialViewsText {
+	width: 128px;
+}
+
+#minPotentialBuyersText {
+	width: 96px;
+}
+
+th {
+	font-size: medium;
+}
+
+tr {
+	font-size: small;
+}
+
+#tableContainer {
+	margin-left: var(--default-margin);
+	margin-right: var(--default-margin);
+}
+
+.dataTables_filter input { 
+	width: 256px;
+}
+
+table.fixedHeader-floating {
+	background-color: var(--background-color);
+}
