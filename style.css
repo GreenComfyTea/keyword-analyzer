@@ -29,6 +29,47 @@
 	--modal-overlay-backdrop-filter: blur(0.25rem);
 }
 
+label {
+	white-space: nowrap;
+}
+
+input[type="text"], input[type="checkbox"] {
+	margin-left: var(--default-margin);
+	margin-bottom: 0%;
+}
+
+input[type="checkbox"] {
+	min-width: 16px;
+	width: 16px;
+	border-radius: 0.25rem;
+	margin-right: 0%;
+}
+
+input[type="range"] {
+	margin-left: var(--default-margin);
+	margin-right: var(--default-margin);
+	margin-bottom: 0%;
+}
+
+input[type="number"] {
+	justify-self: center;
+	margin-bottom: 0%;
+}
+
+th {
+	font-size: 1.2rem;
+}
+
+tr {
+	font-size: 1.1rem;
+}
+
+#inputContainer {
+	padding-left: var(--default-margin);
+	padding-top: var(--default-margin);
+	padding-right: var(--default-margin);
+}
+
 #topInputContainer, #middleInputContainer {
 	display: flex;
 	align-items: center;
@@ -54,59 +95,6 @@
 	margin-top: var(--default-margin);
 }
 
-/* #minViewsContainer {
-	background-color: blueviolet;
-}
-
-#minPotentialViewsContainer {
-	background-color: brown;
-}
-
-#minCompetitionContainer {
-	background-color: chocolate;
-}
-
-#minPotentialBuyersContainer {
-	background-color: darkgreen;
-} */
-
-label {
-	white-space: nowrap;
-}
-
-input[type="range"] {
-	margin-left: var(--default-margin);
-	margin-right: var(--default-margin);
-	margin-bottom: 0%;
-}
-
-input[type="checkbox"] {
-	min-width: 16px;
-	width: 16px;
-	border-radius: 0.25rem;
-	margin-right: 0%;
-}
-
-input[type="text"], input[type="checkbox"] {
-	margin-left: var(--default-margin);
-	margin-bottom: 0%;
-}
-
-input[type="number"] {
-	justify-self: center;
-	margin-bottom: 0%;
-}
-
-#inputContainer {
-	padding-left: var(--default-margin);
-	padding-top: var(--default-margin);
-	padding-right: var(--default-margin);
-}
-
-#userIdLabel, #userTokenLabel, #appendTableLabel, #conversionRateLabel, #timeLimitLabel, #minCompetitionLabel, #minPotentialBuyersLabel {
-	margin-left: var(--default-margin);
-}
-
 #keyword, #userToken {
 	flex: 1;
 }
@@ -118,10 +106,6 @@ input[type="number"] {
 
 #userToken {
 	flex: 3
-}
-
-#getKeywordSuggestionsButton {
-	margin-top: var(--default-margin);
 }
 
 #conversionRateText {
@@ -140,12 +124,12 @@ input[type="number"] {
 	width: 96px;
 }
 
-th {
-	font-size: medium;
+#userIdLabel, #userTokenLabel, #appendTableLabel, #conversionRateLabel, #timeLimitLabel, #minCompetitionLabel, #minPotentialBuyersLabel {
+	margin-left: var(--default-margin);
 }
 
-tr {
-	font-size: small;
+#getKeywordSuggestionsButton {
+	margin-top: var(--default-margin);
 }
 
 #tableContainer {
