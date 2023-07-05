@@ -217,10 +217,31 @@ function loadUserDataFromLocalStorage() {
 	}
 }
 
-async function getKeywordList() {
-	let keyword = inputData.keyword.trim();
+function toggleInput() {
+	/*keywordElement.disabled = !keywordElement.disabled;
+	userIdElement.disabled = !userIdElement.disabled;
+	userTokenElement.disabled = !userTokenElement.disabled;
+	appendKeywordElement.disabled = !appendKeywordElement.disabled;
+	appendTableElement.disabled = !appendTableElement.disabled;
+	conversionRateElement.disabled = !conversionRateElement.disabled;
+	conversionRateTextElement.disabled = !conversionRateTextElement.disabled;
+	timeLimitElement.disabled = !timeLimitElement.disabled;
+	timeLimitTextElement.disabled = !timeLimitTextElement.disabled;
+	minViewsElement.disabled = !minViewsElement.disabled;
+	minViewsTextElement.disabled = !minViewsTextElement.disabled;
+	minCompetitionElement.disabled = !minCompetitionElement.disabled;
+	minCompetitionTextElement.disabled = !minCompetitionTextElement.disabled;
+	minPotentialViewsElement.disabled = !minPotentialViewsElement.disabled;
+	minPotentialViewsTextElement.disabled = !minPotentialViewsTextElement.disabled;
+	minPotentialBuyersElement.disabled = !minPotentialBuyersElement.disabled;
+	minPotentialBuyersTextElement.disabled = !minPotentialBuyersTextElement.disabled;*/
+	getKeywordSuggestionsButtonElement.disabled = !getKeywordSuggestionsButtonElement.disabled;
+}
 
-	//if (inputData.appendKeyword) {
+async function getKeywordList(inputDataCopy) {
+	let keyword = inputDataCopy.keyword.trim();
+
+	//if (inputDataCopy.appendKeyword) {
 	//	keyword = `${keyword}${phone_case_string}`;
 	//}
 
@@ -235,8 +256,8 @@ async function getKeywordList() {
 	return keywords;
 }
 
-async function getKeywordInfo(keyword) {
-	const keywordInfoApiUrl = `https://app.yourprinthouse.eu/api/amazon/getBubleIndex/${keyword}/${inputData.userID}/${inputData.userToken}`;
+async function getKeywordInfo(inputDataCopy, keyword) {
+	const keywordInfoApiUrl = `https://app.yourprinthouse.eu/api/amazon/getBubleIndex/${keyword}/${inputDataCopy.userID}/${inputDataCopy.userToken}`;
 	const keywordInfoApiUrlEncoded = encodeURI(keywordInfoApiUrl);
 
 	const keywordInfo = await getJson(keywordInfoApiUrlEncoded);
@@ -245,31 +266,34 @@ async function getKeywordInfo(keyword) {
 }
 
 async function getKeywordSuggestions() {
-	if (!inputData.keyword || !inputData.userID || !inputData.userToken) {
+	const inputDataCopy = structuredClone(inputData);
+
+	if (!inputDataCopy.keyword || !inputDataCopy.userID || !inputDataCopy.userToken) {
 		return;
 	}
 
-	getKeywordSuggestionsButtonElement.disabled = true;
+	toggleInput();
 
-	if(!inputData.appendTable) {
+	if(!inputDataCopy.appendTable) {
 		keywordTable.clear().draw();
 	}
 
-	const keywords = await getKeywordList();
+	const keywords = await getKeywordList(inputDataCopy);
+	keywords.push();
 
 	const keywordTableData = keywordTable.rows();
 
 	for (let keyword of keywords) {
 		keyword = keyword.trim();
 
-		if(inputData.appendKeyword) {
+		if(inputDataCopy.appendKeyword) {
 			keyword = `${keyword}${phone_case_string}`;
 		}
 
-		const keywordInfoObject = await getKeywordInfo(keyword);
+		const keywordInfoObject = await getKeywordInfo(inputDataCopy, keyword);
 
 		const potentialViews = keywordInfoObject.views / keywordInfoObject.competition;
-		const potentialBuyers = potentialViews * inputData.conversionRate;
+		const potentialBuyers = potentialViews * inputDataCopy.conversionRate;
 
 		const keywordInfo = {
 			name: keywordInfoObject.keyword.trim().replace(phone_case_string, ""),
@@ -281,17 +305,17 @@ async function getKeywordSuggestions() {
 
 		console.log(keywordInfo);
 
-		if(keywordInfo.views < inputData.minViews
-		|| keywordInfo.competition < inputData.minCompetition
-		|| keywordInfo.potentialViews < inputData.minPotentialViews
-		|| keywordInfo.potentialBuyers < inputData.minPotentialBuyers) {
+		if(keywordInfo.views < inputDataCopy.minViews
+		|| keywordInfo.competition < inputDataCopy.minCompetition
+		|| keywordInfo.potentialViews < inputDataCopy.minPotentialViews
+		|| keywordInfo.potentialBuyers < inputDataCopy.minPotentialBuyers) {
 
 			continue;
 		}
 
 		let isDuplicate = false;
 
-		keywordTable.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+		keywordTableData.every( function ( rowIdx, tableLoop, rowLoop ) {
 			let tableKeywordInfo = this.data();
 			if (keywordInfo.name === tableKeywordInfo.name) {
 				isDuplicate = true;
@@ -304,7 +328,7 @@ async function getKeywordSuggestions() {
 		}
 	};
 
-	getKeywordSuggestionsButtonElement.disabled = false;
+	toggleInput();
 }
 
 const onReady = (callback) => {
