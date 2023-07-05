@@ -144,8 +144,8 @@ function loadUserDataFromLocalStorage() {
 	const keyword = localStorage.keyword;
 	const userID = localStorage.userID;
 	const userToken = localStorage.userToken;
-	const appendKeyword = JSON.parse(localStorage.appendKeyword);
-	const appendTable = JSON.parse(localStorage.appendTable);
+	const appendKeywordString = localStorage.appendKeyword;
+	const appendTableString = localStorage.appendTable;
 	const conversionRate = localStorage.conversionRate;
 	const timeLimit = localStorage.timeLimit;
 	const minViews = localStorage.minViews;
@@ -168,12 +168,14 @@ function loadUserDataFromLocalStorage() {
 		userTokenElement.value = userToken;
 	}
 
-	if(appendKeyword || appendKeyword === false) {
+	if(appendKeywordString) {
+		const appendKeyword = JSON.parse(localStorage.appendKeywordString);
 		inputData.appendKeyword = appendKeyword;
 		appendKeywordElement.value.checked = appendKeyword;
 	}
 
-	if(appendTable || appendTable === false) {
+	if(appendTableString) {
+		const appendTable = JSON.parse(localStorage.appendTableString);
 		inputData.appendTable = appendTable;
 		appendTableElement.value.checked = appendTable;
 	}
