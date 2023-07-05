@@ -239,7 +239,7 @@ function toggleInput() {
 }
 
 async function getKeywordList(inputDataCopy) {
-	let keyword = inputDataCopy.keyword.trim();
+	let keyword = inputDataCopy.keyword;
 
 	//if (inputDataCopy.appendKeyword) {
 	//	keyword = `${keyword}${phone_case_string}`;
@@ -274,17 +274,31 @@ async function getKeywordSuggestions() {
 
 	toggleInput();
 
+	inputDataCopy.keyword = inputDataCopy.keyword.trim().toLowerCase();
+
 	if(!inputDataCopy.appendTable) {
 		keywordTable.clear().draw();
 	}
 
 	const keywords = await getKeywordList(inputDataCopy);
-	keywords.push();
-
-	const keywordTableData = keywordTable.rows();
+	keywords.push(inputDataCopy.keyword);
 
 	for (let keyword of keywords) {
-		keyword = keyword.trim();
+		keyword = keyword.trim().toLowerCase().replace(phone_case_string, "");
+
+		let isDuplicate = false;
+
+		keywordTable.rows().every(function (rowIdx, tableLoop, rowLoop) {
+			let tableKeywordInfo = this.data();
+			if (keyword === tableKeywordInfo.name) {
+				isDuplicate = true;
+				return false;
+			}
+		});
+
+		if(isDuplicate) {
+			continue;
+		}
 
 		if(inputDataCopy.appendKeyword) {
 			keyword = `${keyword}${phone_case_string}`;
@@ -296,7 +310,7 @@ async function getKeywordSuggestions() {
 		const potentialBuyers = potentialViews * inputDataCopy.conversionRate;
 
 		const keywordInfo = {
-			name: keywordInfoObject.keyword.trim().replace(phone_case_string, ""),
+			name: keywordInfoObject.keyword.trim().toLowerCase().replace(phone_case_string, ""),
 			views: keywordInfoObject.views,
 			competition: keywordInfoObject.competition,
 			potentialViews: potentialViews.toFixed(1),
@@ -313,19 +327,7 @@ async function getKeywordSuggestions() {
 			continue;
 		}
 
-		let isDuplicate = false;
-
-		keywordTableData.every( function ( rowIdx, tableLoop, rowLoop ) {
-			let tableKeywordInfo = this.data();
-			if (keywordInfo.name === tableKeywordInfo.name) {
-				isDuplicate = true;
-				return false;
-			}
-		} );
-	
-		if(!isDuplicate) {
-			keywordTable.row.add(keywordInfo).draw();
-		}
+		keywordTable.row.add(keywordInfo).draw();
 	};
 
 	toggleInput();
