@@ -3,7 +3,8 @@ const keywordListApiUrlEncoded = encodeURI(keywordListApiUrl);
 
 var keywordTable;
 
-const phone_case_string = " phone case";
+const phoneCaseString = " phone case";
+const getKeywordSuggestionRecursivelyString = "Get Keyword Suggestions Recursively";
 
 const inputData = {
 	keyword: "",
@@ -278,7 +279,7 @@ async function getKeywordSuggestions() {
 	keywords.push(inputDataCopy.keyword);
 
 	for (let keyword of keywords) {
-		keyword = keyword.trim().toLowerCase().replace(phone_case_string, "");
+		keyword = keyword.trim().toLowerCase().replace(phoneCaseString, "");
 
 		let isDuplicate = false;
 
@@ -295,7 +296,7 @@ async function getKeywordSuggestions() {
 		}
 
 		if(inputDataCopy.appendKeyword) {
-			keyword = `${keyword}${phone_case_string}`;
+			keyword = `${keyword}${phoneCaseString}`;
 		}
 
 		const keywordInfoObject = await getKeywordInfo(inputDataCopy, keyword);
@@ -304,7 +305,7 @@ async function getKeywordSuggestions() {
 		const potentialBuyers = potentialViews * inputDataCopy.conversionRate;
 
 		const keywordInfo = {
-			name: keywordInfoObject.keyword.trim().toLowerCase().replace(phone_case_string, ""),
+			name: keywordInfoObject.keyword.trim().toLowerCase().replace(phoneCaseString, ""),
 			views: keywordInfoObject.views,
 			competition: keywordInfoObject.competition,
 			potentialViews: potentialViews.toFixed(1),
@@ -348,10 +349,26 @@ async function getKeywordSuggestionsRecursively() {
 
 	keywordQueue.push(inputDataCopy.keyword);
 
-	const timeLimitMS = 60 * 1000 * inputDataCopy.timeLimit
+	const timeLimitMS = 60 * 1000 * inputDataCopy.timeLimit;
 
 	const startTime = Date.now();
 	let currentTime = Date.now();
+
+	const timer = setInterval(() => {
+		currentTime = Date.now();
+		
+		const timLeftMS = timeLimitMS - (currentTime - startTime);
+		if (timLeftMS > 0) {
+			const timeLeftTotalSec = timLeftMS / 1000;
+			const timeLeftMin = Math.floor(timeLeftTotalSec / 60);
+			const timeLeftSec = (timeLeftTotalSec - 60 * timeLeftMin);
+
+			const timeLeftMinString = timeLeftMin.toString().padStart(2, "0");
+			const timeLeftSecString = timeLeftSec.toFixed(0).padStart(2, "0");
+
+			getKeywordSuggestionsRecursivelyButtonElement.innerText = `${getKeywordSuggestionRecursivelyString} (${timeLeftMinString}:${timeLeftSecString})`;
+		}
+	}, 500);
 
 	while(keywordQueue.length > 0
 	&& currentTime - startTime < timeLimitMS) {
@@ -362,7 +379,7 @@ async function getKeywordSuggestionsRecursively() {
 		keywords.push(inputDataCopy.keyword);
 
 		for (let keyword of keywords) {
-			keyword = keyword.trim().toLowerCase().replace(phone_case_string, "");
+			keyword = keyword.trim().toLowerCase().replace(phoneCaseString, "");
 
 			let isDuplicate = false;
 
@@ -379,7 +396,7 @@ async function getKeywordSuggestionsRecursively() {
 			}
 
 			if(inputDataCopy.appendKeyword) {
-				keyword = `${keyword}${phone_case_string}`;
+				keyword = `${keyword}${phoneCaseString}`;
 			}
 
 			const keywordInfoObject = await getKeywordInfo(inputDataCopy, keyword);
@@ -388,7 +405,7 @@ async function getKeywordSuggestionsRecursively() {
 			const potentialBuyers = potentialViews * inputDataCopy.conversionRate;
 
 			const keywordInfo = {
-				name: keywordInfoObject.keyword.trim().toLowerCase().replace(phone_case_string, ""),
+				name: keywordInfoObject.keyword.trim().toLowerCase().replace(phoneCaseString, ""),
 				views: keywordInfoObject.views,
 				competition: keywordInfoObject.competition,
 				potentialViews: potentialViews.toFixed(1),
@@ -411,11 +428,11 @@ async function getKeywordSuggestionsRecursively() {
 
 			keywordTable.row.add(keywordInfo).draw();
 		};
-
-		currentTime = Date.now();
 	}
 
 	toggleInput();
+	clearInterval(timer);
+	getKeywordSuggestionsRecursivelyButtonElement.innerText = getKeywordSuggestionRecursivelyString;
 }
 
 const onReady = (callback) => {
