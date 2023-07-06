@@ -82,9 +82,8 @@ const minPotentialViewsTextElement = document.getElementById("minPotentialViewsT
 const minPotentialBuyersElement = document.getElementById("minPotentialBuyers");
 const minPotentialBuyersTextElement = document.getElementById("minPotentialBuyersText");
 
-
 const getKeywordSuggestionsButtonElement = document.getElementById("getKeywordSuggestionsButton");
-
+const getKeywordSuggestionsRecursivelyButtonElement = document.getElementById("getKeywordSuggestionsRecursivelyButton");
 
 function saveUserDataToLocalStorage() {
 	if (!localStorage) {
@@ -236,15 +235,10 @@ function toggleInput() {
 	minPotentialBuyersElement.disabled = !minPotentialBuyersElement.disabled;
 	minPotentialBuyersTextElement.disabled = !minPotentialBuyersTextElement.disabled;*/
 	getKeywordSuggestionsButtonElement.disabled = !getKeywordSuggestionsButtonElement.disabled;
+	getKeywordSuggestionsRecursivelyButtonElement.disabled = !getKeywordSuggestionsRecursivelyButtonElement.disabled;
 }
 
-async function getKeywordList(inputDataCopy) {
-	let keyword = inputDataCopy.keyword;
-
-	//if (inputDataCopy.appendKeyword) {
-	//	keyword = `${keyword}${phone_case_string}`;
-	//}
-
+async function getKeywordList(keyword) {
 	console.log(keyword);
 
 	const postData = { "keyword": keyword };
@@ -280,7 +274,7 @@ async function getKeywordSuggestions() {
 		keywordTable.clear().draw();
 	}
 
-	const keywords = await getKeywordList(inputDataCopy);
+	const keywords = await getKeywordList(inputDataCopy.keyword);
 	keywords.push(inputDataCopy.keyword);
 
 	for (let keyword of keywords) {
@@ -329,6 +323,97 @@ async function getKeywordSuggestions() {
 
 		keywordTable.row.add(keywordInfo).draw();
 	};
+
+	toggleInput();
+}
+
+async function getKeywordSuggestionsRecursively() {
+	const inputDataCopy = structuredClone(inputData);
+
+	if (!inputDataCopy.keyword || !inputDataCopy.userID || !inputDataCopy.userToken) {
+		return;
+	}
+
+	toggleInput();
+
+	inputDataCopy.keyword = inputDataCopy.keyword.trim().toLowerCase();
+
+	if(!inputDataCopy.appendTable) {
+		keywordTable.clear().draw();
+	}
+
+	
+	let keywordQueue = [];
+	let processedKeywords = [];
+
+	keywordQueue.push(inputDataCopy.keyword);
+
+	const timeLimitMS = 60 * 1000 * inputDataCopy.timeLimit
+
+	const startTime = Date.now();
+	let currentTime = Date.now();
+
+	while(keywordQueue.length > 0
+	&& currentTime - startTime < timeLimitMS) {
+		const processingKeyword = keywordQueue.pop();
+		processedKeywords.push(processingKeyword);
+		
+		const keywords = await getKeywordList(processingKeyword);
+		keywords.push(inputDataCopy.keyword);
+
+		for (let keyword of keywords) {
+			keyword = keyword.trim().toLowerCase().replace(phone_case_string, "");
+
+			let isDuplicate = false;
+
+			keywordTable.rows().every(function (rowIndex, tableLoop, rowLoop) {
+				let tableKeywordInfo = this.data();
+				if (keyword === tableKeywordInfo.name) {
+					isDuplicate = true;
+					return false;
+				}
+			});
+
+			if(isDuplicate) {
+				continue;
+			}
+
+			if(inputDataCopy.appendKeyword) {
+				keyword = `${keyword}${phone_case_string}`;
+			}
+
+			const keywordInfoObject = await getKeywordInfo(inputDataCopy, keyword);
+
+			const potentialViews = keywordInfoObject.views / keywordInfoObject.competition;
+			const potentialBuyers = potentialViews * inputDataCopy.conversionRate;
+
+			const keywordInfo = {
+				name: keywordInfoObject.keyword.trim().toLowerCase().replace(phone_case_string, ""),
+				views: keywordInfoObject.views,
+				competition: keywordInfoObject.competition,
+				potentialViews: potentialViews.toFixed(1),
+				potentialBuyers: potentialBuyers.toFixed(1),
+			};
+
+			console.log(keywordInfo);
+
+			if(keywordInfo.views < inputDataCopy.minViews
+			|| keywordInfo.competition < inputDataCopy.minCompetition
+			|| keywordInfo.potentialViews < inputDataCopy.minPotentialViews
+			|| keywordInfo.potentialBuyers < inputDataCopy.minPotentialBuyers) {
+
+				continue;
+			}
+
+			if(!processedKeywords.includes(keywordInfo.name)) {
+				keywordQueue.push(keywordInfo.name);
+			}
+
+			keywordTable.row.add(keywordInfo).draw();
+		};
+
+		currentTime = Date.now();
+	}
 
 	toggleInput();
 }

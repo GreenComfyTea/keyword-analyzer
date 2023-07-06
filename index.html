@@ -41,8 +41,8 @@
 				<input type="number" min="0" value="0.5" step="0.1" id="conversionRateText" name="conversionRateText" oninput="onInputConversionRateText(this.value)">
 
 				<label for="timeLimit" id="timeLimitLabel">Time Limit (min):</label>
-				<input type="range" min="1" max="120" value="30" step="0.1" id="timeLimit" oninput="onInputTimeLimit(this.value)">
-				<input type="number" min="0" value="30" step="1" id="timeLimitText" name="timeLimitText" oninput="onInputTimeLimitText(this.value)">
+				<input type="range" min="1" max="30" value="10" step="0.1" id="timeLimit" oninput="onInputTimeLimit(this.value)">
+				<input type="number" min="0" value="10" step="1" id="timeLimitText" name="timeLimitText" oninput="onInputTimeLimitText(this.value)">
 			</div>
 			
 			<div id="bottomInputContainer">
@@ -75,6 +75,7 @@
 				</div>
 			</div>
 			<button id="getKeywordSuggestionsButton" onclick="getKeywordSuggestions()">Get Keyword Suggestions</button>
+			<button id="getKeywordSuggestionsRecursivelyButton" onclick="getKeywordSuggestionsRecursively()">Get Keyword Suggestions Recursively</button>
 		</div>
 	</section>
 
