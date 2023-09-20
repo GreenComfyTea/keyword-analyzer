@@ -68,6 +68,20 @@ tr {
 	padding-left: var(--default-margin);
 	padding-top: var(--default-margin);
 	padding-right: var(--default-margin);
+	display: flex;
+	flex-direction: row;
+}
+
+#leftInputContainer {
+	display: flex;
+	flex-direction: column;
+}
+
+#rightInputContainer {
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	margin-left: var(--default-margin);
 }
 
 #topInputContainer, #middleInputContainer {
@@ -95,7 +109,19 @@ tr {
 	margin-top: var(--default-margin);
 }
 
-#keyword, #userToken {
+#keywordsLabel {
+	margin-top: 0.3rem;
+}
+ 
+#keywords {
+	margin-left: 0;
+	margin-top: calc(var(--default-margin) + 0.3rem);
+	resize: none;
+	height: 100%;
+	min-width: 10rem;
+}
+
+#keywords, #userToken {
 	flex: 1;
 }
 
@@ -124,11 +150,15 @@ tr {
 	width: 96px;
 }
 
-#userIdLabel, #userTokenLabel, #appendTableLabel, #conversionRateLabel, #timeLimitLabel, #minCompetitionLabel, #minPotentialBuyersLabel {
+#userTokenLabel, #appendTableLabel, #conversionRateLabel, #timeLimitLabel, #minCompetitionLabel, #minPotentialBuyersLabel {
 	margin-left: var(--default-margin);
 }
 
 #getKeywordSuggestionsButton {
+	margin-top: var(--default-margin);
+}
+
+#getKeywordSuggestionsRecursivelyButton {
 	margin-top: var(--default-margin);
 }
 

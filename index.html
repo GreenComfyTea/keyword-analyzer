@@ -18,64 +18,69 @@
 <body>
 	<section>
         <div id="inputContainer">
-			<div id="topInputContainer">
-				<label for="keyword" id="keywordLabel">Keyword:</label>
-				<input type="text" id="keyword" name="keyword" oninput="onInputKeyword(this.value)">
-
-				<label for="userID" id="userIdLabel">User ID:</label>
-				<input type="text" id="userID" name="userID" oninput="onInputUserId(this.value)">
-
-				<label for="userToken" id="userTokenLabel">User Token:</label>
-				<input type="text" id="userToken" name="userToken" oninput="onInputUserToken(this.value)">
+			<div id="leftInputContainer">
+				<label for="keyword" id="keywordsLabel">Keywords:</label>
+				<textarea id="keywords" name="keywords" oninput="onInputKeywords(this.value)"></textarea>
 			</div>
 
-			<div id="middleInputContainer">
-				<label for="appendKeyword" id="appendKeywordLabel">Append Keyword with "phone case":</label>
-				<input type="checkbox" id="appendKeyword" name="appendKeyword" checked oninput="onInputAppendKeyword(this.checked)">
-
-				<label for="appendTable" id="appendTableLabel">Append Table:</label>
-				<input type="checkbox" id="appendTable" name="appendTable" oninput="onInputAppendTable(this.checked)">
-
-				<label for="conversionRate" id="conversionRateLabel">Conversion Rate (%):</label>
-				<input type="range" min="0" max="1" value="0.005" step="0.001" id="conversionRate" oninput="onInputConversionRate(this.value)">
-				<input type="number" min="0" value="0.5" step="0.1" id="conversionRateText" name="conversionRateText" oninput="onInputConversionRateText(this.value)">
-
-				<label for="timeLimit" id="timeLimitLabel">Time Limit (min):</label>
-				<input type="range" min="1" max="30" value="10" step="0.1" id="timeLimit" oninput="onInputTimeLimit(this.value)">
-				<input type="number" min="0" value="10" step="1" id="timeLimitText" name="timeLimitText" oninput="onInputTimeLimitText(this.value)">
-			</div>
-			
-			<div id="bottomInputContainer">
-				<div id="bottomLeftInputContainer">
-					<div id="minViewsContainer">
-						<label for="minViews" id="minViewsLabel">Min Views:</label>
-						<input type="range" min="0" max="1000000" value="10000" step="1000" id="minViews" oninput="onInputMinViews(this.value)">
-						<input type="number" min="0" value="10000" step="1000" id="minViewsText" name="minViewsText" oninput="onInputMinViewsText(this.value)">
+			<div id="rightInputContainer">
+				<div id="topInputContainer">
+					<label for="userID" id="userIdLabel">User ID:</label>
+					<input type="text" id="userID" name="userID" oninput="onInputUserId(this.value)">
+	
+					<label for="userToken" id="userTokenLabel">User Token:</label>
+					<input type="text" id="userToken" name="userToken" oninput="onInputUserToken(this.value)">
+				</div>
+	
+				<div id="middleInputContainer">
+					<label for="appendKeywords" id="appendKeywordsLabel">Append Keywords with "phone case":</label>
+					<input type="checkbox" id="appendKeywords" name="appendKeywords" checked oninput="onInputAppendKeywords(this.checked)">
+	
+					<label for="appendTable" id="appendTableLabel">Append Table:</label>
+					<input type="checkbox" id="appendTable" name="appendTable" checked oninput="onInputAppendTable(this.checked)">
+	
+					<label for="conversionRate" id="conversionRateLabel">Conversion Rate (%):</label>
+					<input type="range" min="0" max="1" value="0.005" step="0.001" id="conversionRate" oninput="onInputConversionRate(this.value)">
+					<input type="number" min="0" value="0.5" step="0.1" id="conversionRateText" name="conversionRateText" oninput="onInputConversionRateText(this.value)">
+	
+					<label for="timeLimit" id="timeLimitLabel">Time Limit (min):</label>
+					<input type="range" min="1" max="30" value="10" step="0.1" id="timeLimit" oninput="onInputTimeLimit(this.value)">
+					<input type="number" min="0" value="10" step="1" id="timeLimitText" name="timeLimitText" oninput="onInputTimeLimitText(this.value)">
+				</div>
+				
+				<div id="bottomInputContainer">
+					<div id="bottomLeftInputContainer">
+						<div id="minViewsContainer">
+							<label for="minViews" id="minViewsLabel">Min Views:</label>
+							<input type="range" min="0" max="1000000" value="10000" step="1000" id="minViews" oninput="onInputMinViews(this.value)">
+							<input type="number" min="0" value="10000" step="1000" id="minViewsText" name="minViewsText" oninput="onInputMinViewsText(this.value)">
+						</div>
+	
+						<div id="minPotentialViewsContainer">
+							<label for="minPotentialViews" id="minPotentialViewsLabel">Min Potential Views:</label>
+							<input type="range" min="0" max="10000" value="0" step="10" id="minPotentialViews" oninput="onInputMinPotentialViews(this.value)">
+							<input type="number" min="0" value="0" step="10" id="minPotentialViewsText" name="minPotentialViewsText" oninput="onInputMinPotentialViewsText(this.value)">
+						</div>
 					</div>
-
-					<div id="minPotentialViewsContainer">
-						<label for="minPotentialViews" id="minPotentialViewsLabel">Min Potential Views:</label>
-						<input type="range" min="0" max="10000" value="0" step="10" id="minPotentialViews" oninput="onInputMinPotentialViews(this.value)">
-						<input type="number" min="0" value="0" step="10" id="minPotentialViewsText" name="minPotentialViewsText" oninput="onInputMinPotentialViewsText(this.value)">
+	
+					<div id="bottomRightInputContainer">
+						<div id="minCompetitionContainer">
+							<label for="minCompetition" id="minCompetitionLabel">Min Competition:</label>
+							<input type="range" min="0" max="100000" value="50" id="minCompetition" oninput="onInputMinCompetition(this.value)">
+							<input type="number" min="0" value="50" step="5" id="minCompetitionText" name="minCompetitionText" oninput="onInputMinCompetitionText(this.value)">
+						</div>
+	
+						<div id="minPotentialBuyersContainer">
+							<label for="minPotentialBuyers" id="minPotentialBuyersLabel">Min Potential Buyers:</label>
+							<input type="range" min="0" max="100" value="0" step="1" id="minPotentialBuyers" oninput="onInputMinPotentialBuyers(this.value)">
+							<input type="number" min="0" value="0" step="1" id="minPotentialBuyersText" name="minPotentialBuyersText" oninput="onInputMinPotentialBuyersText(this.value)">
+						</div>
 					</div>
 				</div>
 
-				<div id="bottomRightInputContainer">
-					<div id="minCompetitionContainer">
-						<label for="minCompetition" id="minCompetitionLabel">Min Competition:</label>
-						<input type="range" min="0" max="100000" value="50" id="minCompetition" oninput="onInputMinCompetition(this.value)">
-						<input type="number" min="0" value="50" step="5" id="minCompetitionText" name="minCompetitionText" oninput="onInputMinCompetitionText(this.value)">
-					</div>
-
-					<div id="minPotentialBuyersContainer">
-						<label for="minPotentialBuyers" id="minPotentialBuyersLabel">Min Potential Buyers:</label>
-						<input type="range" min="0" max="100" value="0" step="1" id="minPotentialBuyers" oninput="onInputMinPotentialBuyers(this.value)">
-						<input type="number" min="0" value="0" step="1" id="minPotentialBuyersText" name="minPotentialBuyersText" oninput="onInputMinPotentialBuyersText(this.value)">
-					</div>
-				</div>
+				<button id="getKeywordSuggestionsButton" onclick="getKeywordSuggestions()">Get Keyword Suggestions</button>
+				<button id="getKeywordSuggestionsRecursivelyButton" onclick="getKeywordSuggestionsRecursively()">Get Keyword Suggestions Recursively</button>
 			</div>
-			<button id="getKeywordSuggestionsButton" onclick="getKeywordSuggestions()">Get Keyword Suggestions</button>
-			<button id="getKeywordSuggestionsRecursivelyButton" onclick="getKeywordSuggestionsRecursively()">Get Keyword Suggestions Recursively</button>
 		</div>
 	</section>
 

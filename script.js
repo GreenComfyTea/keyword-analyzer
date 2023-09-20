@@ -7,11 +7,11 @@ const phoneCaseString = " phone case";
 const getKeywordSuggestionRecursivelyString = "Get Keyword Suggestions Recursively";
 
 const inputData = {
-	keyword: "",
+	keywords: "",
 	userID: "",
 	userToken: "",
-	appendKeyword: true,
-	appendTable: false,
+	appendKeywords: true,
+	appendTable: true,
 	conversionRate: 0.005,
 	timeLimit: 30,
 
@@ -58,11 +58,11 @@ const getJsonPost = (url, data) => fetch(url,
 
 }).catch((error) => console.error(error));
 
-const keywordElement = document.getElementById("keyword");
+const keywordsElement = document.getElementById("keywords");
 const userIdElement = document.getElementById("userID");
 const userTokenElement = document.getElementById("userToken");
 
-const appendKeywordElement = document.getElementById("appendKeyword");
+const appendKeywordsElement = document.getElementById("appendKeywords");
 const appendTableElement = document.getElementById("appendTable");
 
 const conversionRateElement = document.getElementById("conversionRate");
@@ -91,8 +91,8 @@ function saveUserDataToLocalStorage() {
 		return;
 	}
 
-	if(inputData.keyword) {
-		localStorage.keyword = inputData.keyword;
+	if(inputData.keywords) {
+		localStorage.keywords = inputData.keywords;
 	}
 
 	if(inputData.userID) {
@@ -103,11 +103,13 @@ function saveUserDataToLocalStorage() {
 		localStorage.userToken = inputData.userToken;
 	}
 
-	if(inputData.appendKeyword || inputData.appendKeyword === false) {
-		localStorage.appendKeyword = inputData.appendKeyword;
+	if(inputData.appendKeywords || inputData.appendKeywords === false) {
+		console.log("saving appendKeywords: ", inputData.appendKeywords);
+		localStorage.appendKeywords = inputData.appendKeywords;
 	}
 
 	if(inputData.appendTable || inputData.appendTable === false) {
+		console.log("saving appendTable: ", inputData.appendTable);
 		localStorage.appendTable = inputData.appendTable;
 	}
 
@@ -141,10 +143,10 @@ function loadUserDataFromLocalStorage() {
 		return;
 	}
 
-	const keyword = localStorage.keyword;
+	const keywords = localStorage.keywords;
 	const userID = localStorage.userID;
 	const userToken = localStorage.userToken;
-	const appendKeywordString = localStorage.appendKeyword;
+	const appendKeywordsString = localStorage.appendKeywords;
 	const appendTableString = localStorage.appendTable;
 	const conversionRate = localStorage.conversionRate;
 	const timeLimit = localStorage.timeLimit;
@@ -153,9 +155,9 @@ function loadUserDataFromLocalStorage() {
 	const minPotentialViews = localStorage.minPotentialViews;
 	const minPotentialBuyers = localStorage.minPotentialBuyers;
 
-	if(keyword) {
-		inputData.keyword = keyword;
-		keywordElement.value = keyword;
+	if(keywords) {
+		inputData.keywords = keywords;
+		keywordsElement.value = keywords;
 	}
 
 	if(userID) {
@@ -168,10 +170,10 @@ function loadUserDataFromLocalStorage() {
 		userTokenElement.value = userToken;
 	}
 
-	if(appendKeywordString) {
-		const appendKeyword = JSON.parse(appendKeywordString);
-		inputData.appendKeyword = appendKeyword;
-		appendKeywordElement.value.checked = appendKeyword;
+	if(appendKeywordsString) {
+		const appendKeywords = JSON.parse(appendKeywordsString);
+		inputData.appendKeywords = appendKeywords;
+		appendKeywordsElement.value.checked = appendKeywords;
 	}
 
 	if(appendTableString) {
@@ -221,7 +223,7 @@ function toggleInput() {
 	/*keywordElement.disabled = !keywordElement.disabled;
 	userIdElement.disabled = !userIdElement.disabled;
 	userTokenElement.disabled = !userTokenElement.disabled;
-	appendKeywordElement.disabled = !appendKeywordElement.disabled;
+	appendKeywordsElement.disabled = !appendKeywordsElement.disabled;
 	appendTableElement.disabled = !appendTableElement.disabled;
 	conversionRateElement.disabled = !conversionRateElement.disabled;
 	conversionRateTextElement.disabled = !conversionRateTextElement.disabled;
@@ -239,15 +241,18 @@ function toggleInput() {
 	getKeywordSuggestionsRecursivelyButtonElement.disabled = !getKeywordSuggestionsRecursivelyButtonElement.disabled;
 }
 
-async function getKeywordList(keyword) {
+async function getAssociatedKeywords(keyword) {
 	console.log(keyword);
 
 	const postData = { "keyword": keyword };
 	const keywordsObject = await getJsonPost(keywordListApiUrlEncoded, postData);
+
+	if (keywordsObject === undefined) {
+		return [];
+	}
+
 	const keywords = keywordsObject.tags;
-
 	console.log(keywords);
-
 	return keywords;
 }
 
@@ -263,67 +268,73 @@ async function getKeywordInfo(inputDataCopy, keyword) {
 async function getKeywordSuggestions() {
 	const inputDataCopy = structuredClone(inputData);
 
-	if (!inputDataCopy.keyword || !inputDataCopy.userID || !inputDataCopy.userToken) {
+	if (!inputDataCopy.keywords || !inputDataCopy.userID || !inputDataCopy.userToken) {
 		return;
 	}
 
 	toggleInput();
 
-	inputDataCopy.keyword = inputDataCopy.keyword.trim().toLowerCase();
+	inputDataCopy.keywords = inputDataCopy.keywords.trim().toLowerCase();
 
 	if(!inputDataCopy.appendTable) {
 		keywordTable.clear().draw();
 	}
+	
+	let keywordQueue = inputDataCopy.keywords.split("\n");
 
-	const keywords = await getKeywordList(inputDataCopy.keyword);
-	keywords.push(inputDataCopy.keyword);
+	while(keywordQueue.length > 0) {
+		let processingKeyword = keywordQueue.pop().trim().toLowerCase();
+		
+		const associatedKeywords = await getAssociatedKeywords(processingKeyword);
+		associatedKeywords.push(processingKeyword);
 
-	for (let keyword of keywords) {
-		keyword = keyword.trim().toLowerCase().replace(phoneCaseString, "");
+		for (let associatedKeyword of associatedKeywords) {
+			associatedKeyword = associatedKeyword.trim().toLowerCase().replace(phoneCaseString, "");
 
-		let isDuplicate = false;
+			let isDuplicate = false;
 
-		keywordTable.rows().every(function (rowIdx, tableLoop, rowLoop) {
-			let tableKeywordInfo = this.data();
-			if (keyword === tableKeywordInfo.name) {
-				isDuplicate = true;
-				return false;
+			keywordTable.rows().every(function (rowIndex, tableLoop, rowLoop) {
+				let tableKeywordInfo = this.data();
+				if (associatedKeyword === tableKeywordInfo.name) {
+					isDuplicate = true;
+					return false;
+				}
+			});
+
+			if(isDuplicate) {
+				continue;
 			}
-		});
 
-		if(isDuplicate) {
-			continue;
-		}
+			if(inputDataCopy.appendKeywords) {
+				associatedKeyword = `${associatedKeyword}${phoneCaseString}`;
+			}
 
-		if(inputDataCopy.appendKeyword) {
-			keyword = `${keyword}${phoneCaseString}`;
-		}
+			const associatedKeywordInfoObject = await getKeywordInfo(inputDataCopy, associatedKeyword);
 
-		const keywordInfoObject = await getKeywordInfo(inputDataCopy, keyword);
+			const potentialViews = associatedKeywordInfoObject.views / associatedKeywordInfoObject.competition;
+			const potentialBuyers = potentialViews * inputDataCopy.conversionRate;
 
-		const potentialViews = keywordInfoObject.views / keywordInfoObject.competition;
-		const potentialBuyers = potentialViews * inputDataCopy.conversionRate;
+			const associatedKeywordInfo = {
+				name: associatedKeywordInfoObject.keyword.trim().toLowerCase().replace(phoneCaseString, ""),
+				views: associatedKeywordInfoObject.views,
+				competition: associatedKeywordInfoObject.competition,
+				potentialViews: potentialViews.toFixed(1),
+				potentialBuyers: potentialBuyers.toFixed(1),
+			};
 
-		const keywordInfo = {
-			name: keywordInfoObject.keyword.trim().toLowerCase().replace(phoneCaseString, ""),
-			views: keywordInfoObject.views,
-			competition: keywordInfoObject.competition,
-			potentialViews: potentialViews.toFixed(1),
-			potentialBuyers: potentialBuyers.toFixed(1),
+			console.log(associatedKeywordInfo);
+
+			if(associatedKeywordInfo.views < inputDataCopy.minViews
+			|| associatedKeywordInfo.competition < inputDataCopy.minCompetition
+			|| associatedKeywordInfo.potentialViews < inputDataCopy.minPotentialViews
+			|| associatedKeywordInfo.potentialBuyers < inputDataCopy.minPotentialBuyers) {
+
+				continue;
+			}
+
+			keywordTable.row.add(associatedKeywordInfo).draw();
 		};
-
-		console.log(keywordInfo);
-
-		if(keywordInfo.views < inputDataCopy.minViews
-		|| keywordInfo.competition < inputDataCopy.minCompetition
-		|| keywordInfo.potentialViews < inputDataCopy.minPotentialViews
-		|| keywordInfo.potentialBuyers < inputDataCopy.minPotentialBuyers) {
-
-			continue;
-		}
-
-		keywordTable.row.add(keywordInfo).draw();
-	};
+	}
 
 	toggleInput();
 }
@@ -331,23 +342,21 @@ async function getKeywordSuggestions() {
 async function getKeywordSuggestionsRecursively() {
 	const inputDataCopy = structuredClone(inputData);
 
-	if (!inputDataCopy.keyword || !inputDataCopy.userID || !inputDataCopy.userToken) {
+	if (!inputDataCopy.keywords || !inputDataCopy.userID || !inputDataCopy.userToken) {
 		return;
 	}
 
 	toggleInput();
 
-	inputDataCopy.keyword = inputDataCopy.keyword.trim().toLowerCase();
+	inputDataCopy.keywords = inputDataCopy.keywords.trim().toLowerCase();
 
 	if(!inputDataCopy.appendTable) {
 		keywordTable.clear().draw();
 	}
 
 	
-	let keywordQueue = [];
+	let keywordQueue = inputDataCopy.keywords.split("\n");
 	let processedKeywords = [];
-
-	keywordQueue.push(inputDataCopy.keyword);
 
 	const timeLimitMS = 60 * 1000 * inputDataCopy.timeLimit;
 
@@ -372,20 +381,21 @@ async function getKeywordSuggestionsRecursively() {
 
 	while(keywordQueue.length > 0
 	&& currentTime - startTime < timeLimitMS) {
-		const processingKeyword = keywordQueue.pop();
+		let processingKeyword = keywordQueue.pop().trim().toLowerCase();
+
 		processedKeywords.push(processingKeyword);
 		
-		const keywords = await getKeywordList(processingKeyword);
-		keywords.push(inputDataCopy.keyword);
+		const associatedKeywords = await getAssociatedKeywords(processingKeyword);
+		associatedKeywords.push(processingKeyword);
 
-		for (let keyword of keywords) {
-			keyword = keyword.trim().toLowerCase().replace(phoneCaseString, "");
+		for (let associatedKeyword of associatedKeywords) {
+			associatedKeyword = associatedKeyword.trim().toLowerCase().replace(phoneCaseString, "");
 
 			let isDuplicate = false;
 
 			keywordTable.rows().every(function (rowIndex, tableLoop, rowLoop) {
 				let tableKeywordInfo = this.data();
-				if (keyword === tableKeywordInfo.name) {
+				if (associatedKeyword === tableKeywordInfo.name) {
 					isDuplicate = true;
 					return false;
 				}
@@ -395,38 +405,42 @@ async function getKeywordSuggestionsRecursively() {
 				continue;
 			}
 
-			if(inputDataCopy.appendKeyword) {
-				keyword = `${keyword}${phoneCaseString}`;
+			if(inputDataCopy.appendKeywords) {
+				associatedKeyword = `${associatedKeyword}${phoneCaseString}`;
 			}
 
-			const keywordInfoObject = await getKeywordInfo(inputDataCopy, keyword);
+			const associatedKeywordInfoObject = await getKeywordInfo(inputDataCopy, associatedKeyword);
 
-			const potentialViews = keywordInfoObject.views / keywordInfoObject.competition;
+			if (associatedKeywordInfoObject === undefined) {
+				continue;
+			}
+
+			const potentialViews = associatedKeywordInfoObject.views / associatedKeywordInfoObject.competition;
 			const potentialBuyers = potentialViews * inputDataCopy.conversionRate;
 
-			const keywordInfo = {
-				name: keywordInfoObject.keyword.trim().toLowerCase().replace(phoneCaseString, ""),
-				views: keywordInfoObject.views,
-				competition: keywordInfoObject.competition,
+			const associatedKeywordInfo = {
+				name: associatedKeywordInfoObject.keyword.trim().toLowerCase().replace(phoneCaseString, ""),
+				views: associatedKeywordInfoObject.views,
+				competition: associatedKeywordInfoObject.competition,
 				potentialViews: potentialViews.toFixed(1),
 				potentialBuyers: potentialBuyers.toFixed(1),
 			};
 
-			console.log(keywordInfo);
+			console.log(associatedKeywordInfo);
 
-			if(keywordInfo.views < inputDataCopy.minViews
-			|| keywordInfo.competition < inputDataCopy.minCompetition
-			|| keywordInfo.potentialViews < inputDataCopy.minPotentialViews
-			|| keywordInfo.potentialBuyers < inputDataCopy.minPotentialBuyers) {
+			if(associatedKeywordInfo.views < inputDataCopy.minViews
+			|| associatedKeywordInfo.competition < inputDataCopy.minCompetition
+			|| associatedKeywordInfo.potentialViews < inputDataCopy.minPotentialViews
+			|| associatedKeywordInfo.potentialBuyers < inputDataCopy.minPotentialBuyers) {
 
 				continue;
 			}
 
-			if(!processedKeywords.includes(keywordInfo.name)) {
-				keywordQueue.push(keywordInfo.name);
+			if(!processedKeywords.includes(associatedKeywordInfo.name)) {
+				keywordQueue.push(associatedKeywordInfo.name);
 			}
 
-			keywordTable.row.add(keywordInfo).draw();
+			keywordTable.row.add(associatedKeywordInfo).draw();
 		};
 	}
 
@@ -451,8 +465,8 @@ const onReady = (callback) => {
 	}
 };
 
-function onInputKeyword(value) {
-	inputData.keyword = value;
+function onInputKeywords(value) {
+	inputData.keywords = value;
 	saveUserDataToLocalStorage();
 }
 
@@ -466,8 +480,8 @@ function onInputUserToken(value) {
 	saveUserDataToLocalStorage();
 }
 
-function onInputAppendKeyword(value) {
-	inputData.appendKeyword = value;
+function onInputAppendKeywords(value) {
+	inputData.appendKeywords = value;
 	saveUserDataToLocalStorage();
 }
 
